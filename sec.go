@@ -4,7 +4,7 @@ import(
 	"fmt"
 	"log"
 
-	"github.com/google/gopacket"
+	//"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 )
 
@@ -42,7 +42,16 @@ func main(){
 	}
 
 	if !devFound {
-		log.Panicln("Device %s is not found !!", iface)
+		log.Panicf("Device '%s' is not found !!\n", iface)
 	}
 	
+	handle, err := pcap.OpenLive(iface, snaplen, promisc, timeout)
+	if err != nil {
+		log.Panicln(err)
+	}
+	defer handle.Close()
+
+	if err := handle.SetBPFFilter(filter); err!= nil{
+		log.Panicln(err)
+	}
 } 
