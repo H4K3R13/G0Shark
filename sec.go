@@ -4,12 +4,12 @@ import(
 	"fmt"
 	"log"
 
-	//"github.com/google/gopacket"
+	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 )
 
 var(
-	iface = "en"
+	iface = "en0"
 	snaplen = int32(1600)
 	promisc = false
 	timeout = pcap.BlockForever
@@ -54,4 +54,9 @@ func main(){
 	if err := handle.SetBPFFilter(filter); err!= nil{
 		log.Panicln(err)
 	}
+
+	source := gopacket.NewPacketSource(handle, handle.LinkType()) 
+	for packet := range source.Packets(){
+		fmt.Println(packet) }
+		
 } 
