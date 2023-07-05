@@ -1,6 +1,7 @@
 package main
 
 import(
+	"encoding/hex"
 	"fmt"
 	"log"
 
@@ -34,6 +35,9 @@ func main(){
 		}
 	}
 
+	fmt.Println("Enter the Device Name")
+	fmt.Scanln(&iface)
+
 	for _, device := range devices{
 		if device.Name == iface{
 			devFound = true
@@ -57,6 +61,17 @@ func main(){
 
 	source := gopacket.NewPacketSource(handle, handle.LinkType()) 
 	for packet := range source.Packets(){
-		fmt.Println(packet) }
+		fmt.Println("Packets:",packet) 
+		// Get the application layer (payload) of the packet
+		appLayer := packet.ApplicationLayer()
+		if appLayer != nil {
+			fmt.Println("Application Layer/Payload:")
+			fmt.Printf("%s\n", appLayer.Payload())
+		}
+		// Get the packet data in hex dump format
+		fmt.Println("Packet Data (Hex Dump):")
+		fmt.Printf("%s\n", hex.Dump(packet.Data()))
+	
+	}
 		
 } 
