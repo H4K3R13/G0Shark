@@ -1,9 +1,12 @@
 package main
 
-import(
+import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"log"
+	//"strconv"
+	//"strings"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
@@ -14,7 +17,7 @@ var(
 	snaplen = int32(1600)
 	promisc = false
 	timeout = pcap.BlockForever
-	filter = "tcp and port 80"
+	filter = "tcp and dst port 21"
 	devFound = false
 )
 
@@ -67,6 +70,13 @@ func main(){
 		if appLayer != nil {
 			fmt.Println("Application Layer/Payload:")
 			fmt.Printf("%s\n", appLayer.Payload())
+		}
+
+		cred := appLayer.Payload()
+		if bytes.Contains(cred,[]byte("USER")){
+			fmt.Print(string(cred))
+		} else if bytes.Contains(cred, []byte("PASS")){
+			fmt.Print(string(cred))
 		}
 		// Get the packet data in hex dump format
 		fmt.Println("Packet Data (Hex Dump):")
