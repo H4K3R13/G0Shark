@@ -14,11 +14,12 @@ import (
 
 var(
 	iface = "en0"
-	snaplen = int32(1600)
-	promisc = false
+	snaplen = int32(320)
+	promisc = true
 	timeout = pcap.BlockForever
-	filter = "tcp and dst port 21"
+	filter = "tcp[13] == 0x11 or tcp[13] == 0x10 or tcp[13] == 0x18"
 	devFound = false
+	results = make(map[string]int)
 )
 
 func main(){
