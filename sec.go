@@ -1,10 +1,13 @@
 package main
 
 import (
-	"bytes"
-	"encoding/hex"
+	//"bytes"
+	//"encoding/hex"
 	"fmt"
 	"log"
+	"os"
+	//"time"
+	//"net"
 	//"strconv"
 	//"strings"
 
@@ -52,66 +55,25 @@ func capture(iface, target string) {
 }
 
 func main() {
+	if len(os.Args) != 4 {
+		log.Fatalln("Usage: main.go <capture_iface> <target_ip> <port1,port2,port3>")
+	}
 	devices, err := pcap.FindAllDevs()
-
 	if err != nil {
 		log.Panicln(err)
 	}
-
-	fmt.Println("Printing All Network Interfaces")
-	for _, devices := range devices {
-		fmt.Println(devices.Name)
-
-		for _, address := range devices.Addresses {
-			fmt.Println("IP:", address.IP)
-			fmt.Println("NetMask", address.Netmask)
-		}
-	}
-
-	fmt.Println("Enter the Device Name")
-	fmt.Scanln(&iface)
-
+	iface := os.Args[1]
 	for _, device := range devices {
 		if device.Name == iface {
 			devFound = true
-			fmt.Println("Device Found!!")
 		}
 	}
-
 	if !devFound {
-		log.Panicf("Device '%s' is not found !!\n", iface)
+		log.Panicf("Device named '%s' does not exist\n", iface)
 	}
-
-	handle, err := pcap.OpenLive(iface, snaplen, promisc, timeout)
-	if err != nil {
-		log.Panicln(err)
+	if devFound == true{
+		log.Printf("Device Found '%s", iface)
 	}
-	defer handle.Close()
-
-	if err := handle.SetBPFFilter(filter); err != nil {
-		log.Panicln(err)
-	}
-
-	source := gopacket.NewPacketSource(handle, handle.LinkType())
-	for packet := range source.Packets() {
-		fmt.Println("Packets:", packet)
-		// Get the application layer (payload) of the packet
-		appLayer := packet.ApplicationLayer()
-		if appLayer != nil {
-			fmt.Println("Application Layer/Payload:")
-			fmt.Printf("%s\n", appLayer.Payload())
-		}
-
-		cred := appLayer.Payload()
-		if bytes.Contains(cred, []byte("USER")) {
-			fmt.Print(string(cred))
-		} else if bytes.Contains(cred, []byte("PASS")) {
-			fmt.Print(string(cred))
-		}
-		// Get the packet data in hex dump format
-		fmt.Println("Packet Data (Hex Dump):")
-		fmt.Printf("%s\n", hex.Dump(packet.Data()))
-
-	}
-
 }
+
+
