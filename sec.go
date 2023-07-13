@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	//"time"
+	"strings"
+	"time"
+
 	//"net"
 	//"strconv"
 	//"strings"
@@ -74,6 +76,13 @@ func main() {
 	if devFound == true{
 		log.Printf("Device Found '%s", iface)
 	}
+
+	ip := os.Args[2]
+	go capture(iface, ip) 
+	time.Sleep(1 * time.Second)
+
+	ports := strings.Split(os.Args[3],",") 
+	fmt.Println(ports)
 }
 
 
