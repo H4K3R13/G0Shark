@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	//"net"
+	"net"
 	//"strconv"
 	//"strings"
 
@@ -73,16 +73,25 @@ func main() {
 	if !devFound {
 		log.Panicf("Device named '%s' does not exist\n", iface)
 	}
-	if devFound == true{
+	if devFound == true {
 		log.Printf("Device Found '%s", iface)
 	}
 
 	ip := os.Args[2]
-	go capture(iface, ip) 
+	go capture(iface, ip)
 	time.Sleep(1 * time.Second)
 
-	ports := strings.Split(os.Args[3],",") 
+	ports := strings.Split(os.Args[3], ",")
 	fmt.Println(ports)
+
+	for _, port := range ports {
+		target := fmt.Sprintf("%s:%s", ip, port)
+		fmt.Println("Trying", target)
+		c, err := net.DialTimeout("tcp", target, 1000*time.Millisecond)
+		if err != nil {
+			continue
+		}
+		c.Close()
+	}
+	time.Sleep(2 * time.Second)
 }
-
-
