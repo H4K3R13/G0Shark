@@ -22,7 +22,8 @@ var (
 	snaplen  = int32(320)
 	promisc  = true
 	timeout  = pcap.BlockForever
-	filter   = "tcp[13] == 0x11 or tcp[13] == 0x10 or tcp[13] == 0x18"
+	//filter   = "tcp[13] == 0x11 or tcp[13] == 0x10 or tcp[13] == 0x18"
+	filter = "tcp and dst port 21"
 	devFound = false
 	results  = make(map[string]int)
 )
@@ -94,4 +95,9 @@ func main() {
 		c.Close()
 	}
 	time.Sleep(2 * time.Second)
+
+	for port, confidence := range results { 
+		 if confidence >= 1 {
+		fmt.Printf("Port %s open (confidence: %d)\n", port, confidence) }
+		}
 }
