@@ -8,7 +8,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
 	"net"
 	//"strconv"
 	//"strings"
@@ -23,7 +22,7 @@ var (
 	promisc  = true
 	timeout  = pcap.BlockForever
 	//filter   = "tcp[13] == 0x11 or tcp[13] == 0x10 or tcp[13] == 0x18"
-	filter = "tcp and dst port 21"
+	filter = "tcp"
 	devFound = false
 	results  = make(map[string]int)
 )
@@ -54,6 +53,7 @@ func capture(iface, target string) {
 			continue
 		}
 		results[srcPort] += 1
+		fmt.Println(packet)
 	}
 }
 
