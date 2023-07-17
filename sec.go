@@ -10,10 +10,11 @@ import (
 	"time"
 	"net"
 	//"strconv"
-	//"strings"
-
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
+	//FOR TUI
+	"github.com/pterm/pterm"
+	"github.com/pterm/pterm/putils" 
 )
 
 var (
@@ -58,9 +59,15 @@ func capture(iface, target string) {
 }
 
 func main() {
+	
+	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
+	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 	if len(os.Args) != 4 {
 		log.Fatalln("Usage: main.go <capture_iface> <target_ip> <port1,port2,port3>")
 	}
+	pterm.DefaultCenter.Print("Scanning", os.Args[2])
+
+
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Panicln(err)
@@ -84,18 +91,20 @@ func main() {
 
 	ports := strings.Split(os.Args[3], ",")
 	fmt.Println(ports)
-
+	totalSteps := len(ports)
+	progressbar,_ := pterm.DefaultProgressbar.WithTotal(totalSteps).Start()
 	for _, port := range ports {
+		progressbar.Increment()
 		target := fmt.Sprintf("%s:%s", ip, port)
-		fmt.Println("Trying", target)
+		fmt.Println("\nTrying", target)
 		c, err := net.DialTimeout("tcp", target, 1000*time.Millisecond)
 		if err != nil {
 			continue
 		}
 		c.Close()
 	}
-	time.Sleep(2 * time.Second)
 
+	time.Sleep(2 * time.Second)
 	for port, confidence := range results { 
 		 if confidence >= 1 {
 		fmt.Printf("Port %s open (confidence: %d)\n", port, confidence) }
