@@ -2,28 +2,28 @@ package main
 
 import (
 	//"bytes"
-	//"encoding/hex"
+	"encoding/hex"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strings"
 	"time"
-	"net"
 	//"strconv"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	//FOR TUI
 	"github.com/pterm/pterm"
-	"github.com/pterm/pterm/putils" 
+	"github.com/pterm/pterm/putils"
 )
 
 var (
-	iface    = "en0"
-	snaplen  = int32(320)
-	promisc  = true
-	timeout  = pcap.BlockForever
+	iface   = "en0"
+	snaplen = int32(320)
+	promisc = true
+	timeout = pcap.BlockForever
 	//filter   = "tcp[13] == 0x11 or tcp[13] == 0x10 or tcp[13] == 0x18"
-	filter = "tcp"
+	filter   = "tcp"
 	devFound = false
 	results  = make(map[string]int)
 )
@@ -54,19 +54,31 @@ func capture(iface, target string) {
 			continue
 		}
 		results[srcPort] += 1
-		fmt.Println(packet)
+
+		pterm.DefaultBasicText.Println(packet)
+
+		// Get the application layer (payload) of the packet
+		appLayer := packet.ApplicationLayer()
+		if appLayer != nil {
+			pterm.DefaultBasicText.Println("Application Layer/Payload:")
+			pterm.DefaultBasicText.Println(appLayer.Payload())
+		}
+
+		// Get the packet data in hex dump format
+		pterm.DefaultBasicText.Println("Packet Data (Hex Dump):")
+		pterm.DefaultBasicText.Println(pterm.Gray(hex.Dump(packet.Data())))
+
 	}
 }
 
 func main() {
-	
+
 	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 	if len(os.Args) != 4 {
 		log.Fatalln("Usage: main.go <capture_iface> <target_ip> <port1,port2,port3>")
 	}
 	pterm.DefaultCenter.Print("Scanning", os.Args[2])
-
 
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
@@ -92,11 +104,11 @@ func main() {
 	ports := strings.Split(os.Args[3], ",")
 	fmt.Println(ports)
 	totalSteps := len(ports)
-	progressbar,_ := pterm.DefaultProgressbar.WithTotal(totalSteps).Start()
+	progressbar, _ := pterm.DefaultProgressbar.WithTotal(totalSteps).Start()
 	for _, port := range ports {
 		progressbar.Increment()
 		target := fmt.Sprintf("%s:%s", ip, port)
-		fmt.Println("\nTrying", target)
+		pterm.DefaultBasicText.Println(pterm.Red("\nTrying: ", target))
 		c, err := net.DialTimeout("tcp", target, 1000*time.Millisecond)
 		if err != nil {
 			continue
@@ -105,8 +117,9 @@ func main() {
 	}
 
 	time.Sleep(2 * time.Second)
-	for port, confidence := range results { 
-		 if confidence >= 1 {
-		fmt.Printf("Port %s open (confidence: %d)\n", port, confidence) }
+	for port, confidence := range results {
+		if confidence >= 1 {
+			fmt.Printf("Port %s open (confidence: %d)\n", port, confidence)
 		}
+	}
 }
