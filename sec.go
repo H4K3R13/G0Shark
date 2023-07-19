@@ -71,6 +71,23 @@ func capture(iface, target string) {
 	}
 }
 
+
+func getServiceName(port string) string {
+	serviceNames := map[string]string{
+		"80":   "HTTP",
+		"443":  "HTTPS",
+		"8080": "HTTP Proxy",
+		// Add more mappings as needed
+	}
+
+	service, found := serviceNames[port]
+	if found {
+		return service
+	}
+	return ""
+}
+
+
 func main() {
 
 	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
@@ -119,7 +136,8 @@ func main() {
 	time.Sleep(2 * time.Second)
 	for port, confidence := range results {
 		if confidence >= 1 {
-			fmt.Printf("Port %s open (confidence: %d)\n", port, confidence)
+			serviceName := getServiceName(port)
+			fmt.Printf("Port %s open (confidence: %d)\n  Servivce : %s \n", port, confidence, serviceName)
 		}
 	}
 }
