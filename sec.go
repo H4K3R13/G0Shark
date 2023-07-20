@@ -87,6 +87,16 @@ func getServiceName(port string) string {
 	return ""
 }
 
+//To check port input
+func parsePortRange(portRange string) {
+	if strings.Contains(portRange, "-"){
+		return 
+	}
+	if strings.Contains(portRange,","){
+
+	}
+	
+}
 
 func main() {
 
@@ -118,7 +128,13 @@ func main() {
 	go capture(iface, ip)
 	time.Sleep(1 * time.Second)
 
-	ports := strings.Split(os.Args[3], ",")
+	//ports := strings.Split(os.Args[3], ",")
+	portRange := os.Args[3]
+	ports, err := parsePortRange(portRange)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	fmt.Println(ports)
 	totalSteps := len(ports)
 	progressbar, _ := pterm.DefaultProgressbar.WithTotal(totalSteps).Start()
