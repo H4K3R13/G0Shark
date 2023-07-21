@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 	"time"
-	//"strconv"
+	"strconv"
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
 	//FOR TUI
@@ -88,13 +88,25 @@ func getServiceName(port string) string {
 }
 
 //To check port input
-func parsePortRange(portRange string) {
-	if strings.Contains(portRange, "-"){
-		return 
-	}
-	if strings.Contains(portRange,","){
+func parsePortRange(portRange string) ([]int, error) {
+	var ports []int
 
+	//to list 80-100 type of ports
+	if strings.Contains(portRange, "-"){
+		rangeParts := strings.Split(portRange,"-")
+		start, err := strconv.Atoi(rangeParts[0])
+		if err != nil {
+			return nil, fmt.Errorf("invalid port number: %s", rangeParts[0])
+		}
+		end, err := strconv.Atoi(rangeParts[1])
+		for port := start; port <= end; port++ {
+			ports = append(ports, port)
+		}
 	}
+	return ports, nil
+	//if strings.Contains(portRange,","){
+
+	//}
 	
 }
 
@@ -140,7 +152,7 @@ func main() {
 	progressbar, _ := pterm.DefaultProgressbar.WithTotal(totalSteps).Start()
 	for _, port := range ports {
 		progressbar.Increment()
-		target := fmt.Sprintf("%s:%s", ip, port)
+		target := fmt.Sprintf("%s:%d", ip, port)
 		pterm.DefaultBasicText.Println(pterm.Red("\nTrying: ", target))
 		c, err := net.DialTimeout("tcp", target, 1000*time.Millisecond)
 		if err != nil {
