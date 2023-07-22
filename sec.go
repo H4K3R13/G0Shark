@@ -103,10 +103,19 @@ func parsePortRange(portRange string) ([]int, error) {
 			ports = append(ports, port)
 		}
 	}
-	return ports, nil
-	//if strings.Contains(portRange,","){
 
-	//}
+	if strings.Contains(portRange,","){
+		portStrings := strings.Split(portRange,",")
+    	for _, portStr := range portStrings {
+			port, err := strconv.Atoi(portStr)
+			if err != nil {
+				return nil, fmt.Errorf("invalid port number: %s", portStr)
+			}
+        ports = append(ports, port)
+    	}
+	}
+
+	return ports, nil
 	
 }
 
