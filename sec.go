@@ -119,6 +119,13 @@ func parsePortRange(portRange string) ([]int, error) {
 	
 }
 
+//pcap handling function
+func readPcapFile(filename string) error {
+	handle,err := pcap.OpenOffline(filename)
+	fmt.Println(handle,err)
+	return nil
+}
+
 func main() {
 
 	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
@@ -176,5 +183,12 @@ func main() {
 			serviceName := getServiceName(port)
 			fmt.Printf("Port %s open (confidence: %d)\n  Servivce : %s \n", port, confidence, serviceName)
 		}
+	}
+
+	//reading a pcap file
+	filename := "packet.pcap"
+	err = readPcapFile(filename)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
