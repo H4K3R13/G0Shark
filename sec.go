@@ -122,7 +122,13 @@ func parsePortRange(portRange string) ([]int, error) {
 //pcap handling function
 func readPcapFile(filename string) error {
 	handle,err := pcap.OpenOffline(filename)
-	fmt.Println(handle,err)
+	if err != nil {
+		return err
+	}
+	defer handle.Close() 
+	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	packet := <-packetSource.Packets()
+	fmt.Println(packet)
 	return nil
 }
 
