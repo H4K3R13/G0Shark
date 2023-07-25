@@ -4,14 +4,14 @@ import (
 	//"bytes"
 	"encoding/hex"
 	"fmt"
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/pcap"
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 	"time"
-	"strconv"
-	"github.com/google/gopacket"
-	"github.com/google/gopacket/pcap"
 	//FOR TUI
 	"github.com/pterm/pterm"
 	"github.com/pterm/pterm/putils"
@@ -71,7 +71,6 @@ func capture(iface, target string) {
 	}
 }
 
-
 func getServiceName(port string) string {
 	serviceNames := map[string]string{
 		"80":   "HTTP",
@@ -87,13 +86,13 @@ func getServiceName(port string) string {
 	return ""
 }
 
-//To check port input
+// To check port input
 func parsePortRange(portRange string) ([]int, error) {
 	var ports []int
 
 	//to list 80-100 type of ports
-	if strings.Contains(portRange, "-"){
-		rangeParts := strings.Split(portRange,"-")
+	if strings.Contains(portRange, "-") {
+		rangeParts := strings.Split(portRange, "-")
 		start, err := strconv.Atoi(rangeParts[0])
 		if err != nil {
 			return nil, fmt.Errorf("invalid port number: %s", rangeParts[0])
@@ -104,53 +103,63 @@ func parsePortRange(portRange string) ([]int, error) {
 		}
 	}
 
-	if strings.Contains(portRange,","){
-		portStrings := strings.Split(portRange,",")
-    	for _, portStr := range portStrings {
+	if strings.Contains(portRange, ",") {
+		portStrings := strings.Split(portRange, ",")
+		for _, portStr := range portStrings {
 			port, err := strconv.Atoi(portStr)
 			if err != nil {
 				return nil, fmt.Errorf("invalid port number: %s", portStr)
 			}
-        ports = append(ports, port)
-    	}
+			ports = append(ports, port)
+		}
 	}
 
 	return ports, nil
-	
+
 }
 
-//pcap handling function
+// pcap handling function
 func readPcapFile(filename string) error {
-	handle,err := pcap.OpenOffline(filename)
+	var num_packets int
+	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		return err
 	}
-	defer handle.Close() 
+	defer handle.Close()
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
-	packet := <-packetSource.Packets()
-	fmt.Println(packet)
+	var packets []gopacket.Packet
+
+	for packet := range packetSource.Packets() {
+		packets = append(packets, packet)
+	}
+	fmt.Printf("Total packets in the file: %d\n", len(packets))
+	fmt.Println("Enter the number of packet to be printed: ")
+	fmt.Scanln(&num_packets)
+	for i := 0; i < num_packets; i++ {
+		fmt.Println("Packet ", i+1)
+		fmt.Println(packets[i])
+	}
 	return nil
 }
 
-func main() {
-
-	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
-	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
-	if len(os.Args) != 4 {
+func scan() {
+	if len(os.Args) != 5 {
 		log.Fatalln("Usage: main.go <capture_iface> <target_ip> <port1,port2,port3>")
 	}
-	pterm.DefaultCenter.Print("Scanning", os.Args[2])
+	pterm.DefaultCenter.Print("Scanning", os.Args[3])
 
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Panicln(err)
 	}
-	iface := os.Args[1]
+
+	iface := os.Args[2]
 	for _, device := range devices {
 		if device.Name == iface {
 			devFound = true
 		}
 	}
+
 	if !devFound {
 		log.Panicf("Device named '%s' does not exist\n", iface)
 	}
@@ -158,12 +167,12 @@ func main() {
 		log.Printf("Device Found '%s", iface)
 	}
 
-	ip := os.Args[2]
+	ip := os.Args[3]
 	go capture(iface, ip)
 	time.Sleep(1 * time.Second)
 
-	//ports := strings.Split(os.Args[3], ",")
-	portRange := os.Args[3]
+	//ports := strings.Split(os.Args[4], ",")
+	portRange := os.Args[4]
 	ports, err := parsePortRange(portRange)
 	if err != nil {
 		log.Fatalln(err)
@@ -190,11 +199,21 @@ func main() {
 			fmt.Printf("Port %s open (confidence: %d)\n  Servivce : %s \n", port, confidence, serviceName)
 		}
 	}
+}
 
-	//reading a pcap file
-	filename := "packet.pcap"
-	err = readPcapFile(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
+func main() {
+	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
+	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
+
+	choice := os.Args[1]
+	if choice == "-s" {
+		scan()
+	} else if choice == "-r" {
+		//filename := "packet.pcap"
+		filename := os.Args[2]
+		err := readPcapFile(filename)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}	
 }
