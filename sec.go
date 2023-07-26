@@ -14,7 +14,7 @@ import (
 	"time"
 	//FOR TUI
 	"github.com/pterm/pterm"
-	"github.com/pterm/pterm/putils"
+	//"github.com/pterm/pterm/putils"
 )
 
 var (
@@ -136,8 +136,8 @@ func readPcapFile(filename string) error {
 	fmt.Println("Enter the number of packet to be printed: ")
 	fmt.Scanln(&num_packets)
 	for i := 0; i < num_packets; i++ {
-		fmt.Println("Packet ", i+1)
-		fmt.Println(packets[i])
+		pterm.Success.Println("Packet: ", i+1) 
+		pterm.Println(pterm.Red(packets[i]))
 	}
 	return nil
 }
@@ -147,7 +147,6 @@ func scan() {
 		log.Fatalln("Usage: main.go <capture_iface> <target_ip> <port1,port2,port3>")
 	}
 	pterm.DefaultCenter.Print("Scanning", os.Args[3])
-
 	devices, err := pcap.FindAllDevs()
 	if err != nil {
 		log.Panicln(err)
@@ -201,8 +200,20 @@ func scan() {
 	}
 }
 
+//Help Guide
+func help(){
+	pterm.DefaultTable.WithHasHeader().WithBoxed().WithData(pterm.TableData{
+		{"Option", "Function", "Example"},
+		{"-h", "help", ""},
+		{"-r", "Read .pcap files", "-r filename/filepath"},
+		{"-s", "Scan an IP", "-s en0 $IP [port,port,port]or[port-port] "},	
+	}).Render()
+}
+
+
 func main() {
-	_ = pterm.DefaultBigText.WithLetters(putils.LettersFromString("SEC-GO")).Render()
+	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("SEC GO")).Srender()
+	pterm.DefaultCenter.Println(s) //
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 
 	choice := os.Args[1]
@@ -215,5 +226,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-	}	
+	}	else if choice == "-h"{
+		help()
+	}
 }
