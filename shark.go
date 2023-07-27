@@ -134,7 +134,7 @@ func readPcapFile(filename string) error {
 	}
 	fmt.Printf("Total packets in the file: %d\n", len(packets))
 	fmt.Println("Enter the number of packet to be printed: ")
-	fmt.Scanln(&num_packets)
+	num_packets,_ = strconv.Atoi(os.Args[2])
 	for i := 0; i < num_packets; i++ {
 		pterm.Success.Println("Packet: ", i+1) 
 		pterm.Println(pterm.Red(packets[i]))
@@ -212,7 +212,7 @@ func help(){
 
 
 func main() {
-	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("SEC GO")).Srender()
+	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
 	pterm.DefaultCenter.Println(s) //
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 
@@ -221,7 +221,7 @@ func main() {
 		scan()
 	} else if choice == "-r" {
 		//filename := "packet.pcap"
-		filename := os.Args[2]
+		filename := os.Args[3]
 		err := readPcapFile(filename)
 		if err != nil {
 			log.Fatal(err)
