@@ -6,5 +6,5 @@ For scanning
 ```
 For reading .pcap
 ```bash
-    go run shark.go -r filename/filepath
+    go run shark.go -r 2 filename/filepath
 ``````

@@ -14,6 +14,7 @@ import (
 	"time"
 	//FOR TUI
 	"github.com/pterm/pterm"
+	"github.com/google/gopacket/layers"
 	//"github.com/pterm/pterm/putils"
 )
 
@@ -132,12 +133,31 @@ func readPcapFile(filename string) error {
 	for packet := range packetSource.Packets() {
 		packets = append(packets, packet)
 	}
-	fmt.Printf("Total packets in the file: %d\n", len(packets))
-	fmt.Println("Enter the number of packet to be printed: ")
+	fmt.Println(pterm.LightGreen("Total packets in the file: ", len(packets)))
 	num_packets,_ = strconv.Atoi(os.Args[2])
 	for i := 0; i < num_packets; i++ {
 		pterm.Success.Println("Packet: ", i+1) 
-		pterm.Println(pterm.Red(packets[i]))
+		//Network Layer
+		fmt.Println("Network Layer  ")
+		//pterm.Println(pterm.Red(packets[i].NetworkLayer()))
+		networkLayer := packets[i].NetworkLayer()
+		if networkLayer != nil {
+			// Type assertion to get the IPv4 layer
+			ipLayer, ok := networkLayer.(*layers.IPv4)
+			if ok {
+				fmt.Println(pterm.Red("Source IP:", ipLayer.SrcIP))
+				fmt.Println(pterm.Red("Destination IP:", ipLayer.DstIP))
+			} else {
+				fmt.Println("Not an IPv4 packet.")
+			}
+		} else {
+			fmt.Println("No network layer found.")
+		}
+		//Transport Layer
+		//fmt.Println("Transport Layert : ")
+		//pterm.Println(pterm.White(packets[i].TransportLayer()))
+	
+
 	}
 	return nil
 }
@@ -213,7 +233,7 @@ func help(){
 
 func main() {
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
-	pterm.DefaultCenter.Println(s) //
+	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 
 	choice := os.Args[1]
