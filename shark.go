@@ -136,7 +136,7 @@ func readPcapFile(filename string) error {
 	fmt.Println(pterm.LightGreen("Total packets in the file: ", len(packets)))
 	num_packets,_ = strconv.Atoi(os.Args[2])
 	for i := 0; i < num_packets; i++ {
-		pterm.Success.Println("Packet: ", i+1) 
+		pterm.BgLightGreen.Println("Packet ", i+1) 
 		//Network Layer
 		fmt.Println("Network Layer  ")
 		//pterm.Println(pterm.Red(packets[i].NetworkLayer()))
@@ -145,8 +145,8 @@ func readPcapFile(filename string) error {
 			// Type assertion to get the IPv4 layer
 			ipLayer, ok := networkLayer.(*layers.IPv4)
 			if ok {
-				fmt.Println(pterm.Red("Source IP:", ipLayer.SrcIP))
-				fmt.Println(pterm.Red("Destination IP:", ipLayer.DstIP))
+				fmt.Println(pterm.Red("Source IP: ", ipLayer.SrcIP))
+				fmt.Println(pterm.Red("Destination IP: ", ipLayer.DstIP))
 			} else {
 				fmt.Println("Not an IPv4 packet.")
 			}
@@ -154,8 +154,27 @@ func readPcapFile(filename string) error {
 			fmt.Println("No network layer found.")
 		}
 		//Transport Layer
-		//fmt.Println("Transport Layert : ")
-		//pterm.Println(pterm.White(packets[i].TransportLayer()))
+		fmt.Println("Transport Layer")
+		fmt.Print(pterm.Yellow("Protocol: "))
+		transportLayer := packets[i].TransportLayer()
+		if transportLayer != nil {
+			switch transportLayer.LayerType() {
+			case layers.LayerTypeTCP:
+				fmt.Println(pterm.Yellow("TCP"))
+			case layers.LayerTypeUDP:
+				fmt.Println(pterm.Yellow("UDP"))
+			case layers.LayerTypeICMPv4:
+				fmt.Println(pterm.Yellow("ICMPv4"))
+			case layers.LayerTypeICMPv6:
+				fmt.Println(pterm.Yellow("ICMPv6"))
+			case layers.LayerTypeSCTP:
+				fmt.Println(pterm.Yellow("SCTP"))
+			case layers.LayerTypeDNS:
+				fmt.Println(pterm.Yellow("DNS"))
+			default:
+				fmt.Println(pterm.Yellow("Unknown"))
+			}
+		}
 	
 
 	}
