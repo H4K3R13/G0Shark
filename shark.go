@@ -161,14 +161,21 @@ func readPcapFile(filename string) error {
 			switch transportLayer.LayerType() {
 			case layers.LayerTypeTCP:
 				fmt.Println(pterm.Yellow("TCP"))
+				tcpLayer, _ := transportLayer.(*layers.TCP)
+			fmt.Println(pterm.Yellow("Checksum:", tcpLayer.Checksum))
+			fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
 			case layers.LayerTypeUDP:
 				fmt.Println(pterm.Yellow("UDP"))
+				udpLayer, _ := transportLayer.(*layers.UDP)
+				fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
 			case layers.LayerTypeICMPv4:
 				fmt.Println(pterm.Yellow("ICMPv4"))
 			case layers.LayerTypeICMPv6:
 				fmt.Println(pterm.Yellow("ICMPv6"))
 			case layers.LayerTypeSCTP:
 				fmt.Println(pterm.Yellow("SCTP"))
+				sctpLayer, _ := transportLayer.(*layers.SCTP)
+				fmt.Println(pterm.Yellow("Checksum:", sctpLayer.Checksum))
 			case layers.LayerTypeDNS:
 				fmt.Println(pterm.Yellow("DNS"))
 			default:
@@ -176,7 +183,12 @@ func readPcapFile(filename string) error {
 			}
 		}
 	
-
+			// Process the packet here ,  To add
+			// For example, you can access its layers and information using:
+			// - packet.NetworkLayer() to get the network layer DONE
+			// - packet.TransportLayer() to get the transport layer
+			// - packet.ApplicationLayer() to get the application layer (payload)
+			// - packet.Metadata().CaptureInfo to get capture information (timestamp, length, etc.)
 	}
 	return nil
 }
