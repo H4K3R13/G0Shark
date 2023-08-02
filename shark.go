@@ -163,12 +163,16 @@ func readPcapFile(filename string) error {
 				fmt.Println(pterm.Yellow("TCP"))
 				tcpLayer, _ := transportLayer.(*layers.TCP)
 				fmt.Println(pterm.Yellow("Checksum:", tcpLayer.Checksum))
+				fmt.Println(pterm.Yellow("Source Port: ", tcpLayer.SrcPort))
+				fmt.Println(pterm.Yellow("Destination Port: ", tcpLayer.DstPort))
 				fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(tcpLayer.Payload)))
 			case layers.LayerTypeUDP:
 				fmt.Println(pterm.Yellow("UDP"))
 				udpLayer, _ := transportLayer.(*layers.UDP)
 				fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
+				fmt.Println(pterm.Yellow("Source Port: ", udpLayer.SrcPort))
+				fmt.Println(pterm.Yellow("Destination Port: ", udpLayer.DstPort))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(udpLayer.Payload)))
 			case layers.LayerTypeICMPv4:
 				fmt.Println(pterm.Yellow("ICMPv4"))
