@@ -72,20 +72,7 @@ func capture(iface, target string) {
 	}
 }
 
-func getServiceName(port string) string {
-	serviceNames := map[string]string{
-		"80":   "HTTP",
-		"443":  "HTTPS",
-		"8080": "HTTP Proxy",
-		// Add more mappings as needed
-	}
 
-	service, found := serviceNames[port]
-	if found {
-		return service
-	}
-	return ""
-}
 
 // To check port input
 func parsePortRange(portRange string) ([]int, error) {
@@ -166,6 +153,8 @@ func readPcapFile(filename string) error {
 				fmt.Println(pterm.Yellow("Source Port: ", tcpLayer.SrcPort))
 				fmt.Println(pterm.Yellow("Destination Port: ", tcpLayer.DstPort))
 				fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
+				serviceName := getServiceName(tcpLayer.SrcPort.String())
+				fmt.Println(pterm.Yellow("Service: ", serviceName))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(tcpLayer.Payload)))
 			case layers.LayerTypeUDP:
 				fmt.Println(pterm.Yellow("UDP"))
@@ -173,6 +162,8 @@ func readPcapFile(filename string) error {
 				fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
 				fmt.Println(pterm.Yellow("Source Port: ", udpLayer.SrcPort))
 				fmt.Println(pterm.Yellow("Destination Port: ", udpLayer.DstPort))
+				serviceName := getServiceName(udpLayer.SrcPort.String())
+				fmt.Println(pterm.Yellow("Service: ", serviceName))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(udpLayer.Payload)))
 			case layers.LayerTypeICMPv4:
 				fmt.Println(pterm.Yellow("ICMPv4"))
@@ -204,6 +195,20 @@ func readPcapFile(filename string) error {
 			// - packet.Metadata().CaptureInfo to get capture information (timestamp, length, etc.)
 	}
 	return nil
+}
+
+//Service finder
+func getServiceName(port string) string {
+	serviceNames := map[string]string{
+		"80":    "HTTP",
+		"443":   "HTTPS",
+		"8080":  "HTTP Proxy",
+		"21":    "FTP",
+	}
+
+	service := serviceNames[port]
+	return service
+
 }
 
 func scan() {
