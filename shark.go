@@ -182,12 +182,21 @@ func readPcapFile(filename string) error {
 			fmt.Println("Application Layer")
 			fmt.Println(pterm.LightBlue("Data Size: ",applicationLayer))
 		}
-	
+		
+		captureInfo := packets[i].Metadata()
+		if captureInfo!= nil {
+		fmt.Println("Capture Info:")
+		fmt.Println(pterm.Green("Timestamp:", captureInfo.Timestamp))
+		//pterm.DefaultBasicText.Println("Capture Length:", captureInfo.CaptureLength)
+		//pterm.DefaultBasicText.Println("Length:", captureInfo.Length)
+		//pterm.DefaultBasicText.Println("Interface Index:", captureInfo.InterfaceIndex)
+		//pterm.DefaultBasicText.Println("Packet Source:", captureInfo.PacketSource)
+		}
 			// Process the packet here ,  To add
 			// For example, you can access its layers and information using:
 			// - packet.NetworkLayer() to get the network layer DONE
 			// - packet.TransportLayer() to get the transport layer DONE
-			// - packet.ApplicationLayer() to get the application layer (payload) 
+			// - packet.ApplicationLayer() to get the application layer (payload) Done
 			// - packet.Metadata().CaptureInfo to get capture information (timestamp, length, etc.)
 	}
 	return nil
