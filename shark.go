@@ -186,11 +186,9 @@ func readPcapFile(filename string) error {
 		captureInfo := packets[i].Metadata()
 		if captureInfo!= nil {
 		fmt.Println("Capture Info:")
-		fmt.Println(pterm.Green("Timestamp:", captureInfo.Timestamp))
-		//pterm.DefaultBasicText.Println("Capture Length:", captureInfo.CaptureLength)
-		//pterm.DefaultBasicText.Println("Length:", captureInfo.Length)
-		//pterm.DefaultBasicText.Println("Interface Index:", captureInfo.InterfaceIndex)
-		//pterm.DefaultBasicText.Println("Packet Source:", captureInfo.PacketSource)
+		fmt.Println(pterm.Green("Timestamp: ", captureInfo.Timestamp))
+		fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
+		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
 			// Process the packet here ,  To add
 			// For example, you can access its layers and information using:
