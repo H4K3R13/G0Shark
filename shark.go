@@ -190,12 +190,8 @@ func readPcapFile(filename string) error {
 		fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
 		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
-			// Process the packet here ,  To add
-			// For example, you can access its layers and information using:
-			// - packet.NetworkLayer() to get the network layer DONE
-			// - packet.TransportLayer() to get the transport layer DONE
-			// - packet.ApplicationLayer() to get the application layer (payload) Done
-			// - packet.Metadata().CaptureInfo to get capture information (timestamp, length, etc.)
+
+		fmt.Println(pterm.LightRed(packets[i]))
 	}
 	return nil
 }
