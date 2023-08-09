@@ -1,10 +1,40 @@
-#G0Shark
 
-For scanning
+# G0Shark
+This is a tool has similar features of Wireshark. Which can be used to read packets and get informations from it. developed using GO lang 
+
+
+
+## Screenshots
+
+![g0shark](./src/s1.png)
+
+
+
+## Tech Stack
+
+
+
+## How to run
+Clone the repository
 ```bash
-    go run shark.go -s en0 74.207.244.221 80,443,8080 
+git clone https://github.com/H4K3R13/G0Shark.git
 ```
-For reading .pcap
+Change the directory
 ```bash
-    go run shark.go -r 2 filename/filepath
-``````
+cd G0Shark
+```
+Install the modules
+```bash
+go mod download
+```
+Build 
+```bash
+go build -v ./shark.go
+```
+To read packets
+```bash
+./shark -r 2 packets.pcap
+```
+
+-r read packets 2 [number of packets to be read]
+
