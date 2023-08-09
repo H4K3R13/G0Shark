@@ -1,4 +1,4 @@
-module github.com/H4K3R13/G0SHARK
+module github.com/H4K3R13/G0Shark
 
 go 1.20
 
