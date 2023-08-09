@@ -11,9 +11,7 @@ This is a tool has similar features of Wireshark. Which can be used to read pack
 
 
 ## Tech Stack
-
-
-
+- GO Lang
 ## How to run
 Clone the repository
 ```bash
