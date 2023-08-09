@@ -6,7 +6,7 @@ This is a tool has similar features of Wireshark. Which can be used to read pack
 
 ## Screenshots
 
-![g0shark](/src/s1.png)
+![g0shark](./src/s1.png)
 
 
 
