@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/google/gopacket v1.1.19
+	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pterm/pterm v0.12.65
 )
 

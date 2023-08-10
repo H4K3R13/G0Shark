@@ -15,6 +15,7 @@ import (
 	//FOR TUI
 	"github.com/pterm/pterm"
 	"github.com/google/gopacket/layers"
+	"github.com/olekukonko/tablewriter"
 	//"github.com/pterm/pterm/putils"
 )
 
@@ -109,6 +110,10 @@ func parsePortRange(portRange string) ([]int, error) {
 // pcap handling function
 func readPcapFile(filename string) error {
 	var num_packets int
+	//Initialze the table
+	table := tablewriter.NewWriter(os.Stdout)
+	//Table header
+	table.SetHeader([]string{"No.", "Src. IP"})
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		return err
@@ -134,6 +139,8 @@ func readPcapFile(filename string) error {
 			if ok {
 				fmt.Println(pterm.Red("Source IP: ", ipLayer.SrcIP))
 				fmt.Println(pterm.Red("Destination IP: ", ipLayer.DstIP))
+				table.Append([]string{strconv.Itoa(i+1),ipLayer.SrcIP.String()})
+        		//table.Append([]string{"Destination IP", ipLayer.DstIP.String()})
 			} else {
 				fmt.Println("Not an IPv4 packet.")
 			}
@@ -193,6 +200,7 @@ func readPcapFile(filename string) error {
 
 		fmt.Println(pterm.LightRed(packets[i]))
 	}
+	table.Render()
 	return nil
 }
 
@@ -276,6 +284,7 @@ func help(){
 		{"-r", "Read .pcap files", "-r filename/filepath"},
 		{"-s", "Scan an IP", "-s en0 $IP [port,port,port]or[port-port] "},	
 	}).Render()
+
 }
 
 
