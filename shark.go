@@ -15,7 +15,6 @@ import (
 	//FOR TUI
 	"github.com/pterm/pterm"
 	"github.com/google/gopacket/layers"
-	"github.com/olekukonko/tablewriter"
 	//"github.com/pterm/pterm/putils"
 )
 
@@ -110,10 +109,10 @@ func parsePortRange(portRange string) ([]int, error) {
 // pcap handling function
 func readPcapFile(filename string) error {
 	var num_packets int
-	//Initialze the table
-	table := tablewriter.NewWriter(os.Stdout)
-	//Table header
-	table.SetHeader([]string{"No.", "Src. IP"})
+	//Setting options
+	var selectedPackets []gopacket.Packet
+	options := []string{}
+
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		return err
@@ -139,8 +138,8 @@ func readPcapFile(filename string) error {
 			if ok {
 				fmt.Println(pterm.Red("Source IP: ", ipLayer.SrcIP))
 				fmt.Println(pterm.Red("Destination IP: ", ipLayer.DstIP))
-				table.Append([]string{strconv.Itoa(i+1),ipLayer.SrcIP.String()})
-        		//table.Append([]string{"Destination IP", ipLayer.DstIP.String()})
+				//sourceIP := ipLayer.SrcIP
+				//destination := ipLayer.DstIP
 			} else {
 				fmt.Println("Not an IPv4 packet.")
 			}
@@ -198,9 +197,23 @@ func readPcapFile(filename string) error {
 		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
 
-		fmt.Println(pterm.LightRed(packets[i]))
+		//fmt.Println(pterm.LightRed(packets[i]))
+		options = append(options, fmt.Sprintf("Packet %d", i+1),)
+		selectedPackets = append(selectedPackets, packets[i])
 	}
-	table.Render()
+	// Interactive packet selection
+	result, _ := pterm.DefaultInteractiveSelect.
+		WithOptions(options).
+		Show()
+
+	selectedIndex, err := strconv.Atoi(result)
+	if err != nil {
+		return err
+	}
+
+	// Process the selected packet
+	selectedPacket := selectedPackets[selectedIndex-1]
+	fmt.Println("Packet", selectedPacket)
 	return nil
 }
 
