@@ -198,22 +198,22 @@ func readPcapFile(filename string) error {
 		}
 
 		//fmt.Println(pterm.LightRed(packets[i]))
-		options = append(options, fmt.Sprintf("Packet %d", i+1),)
+		options = append(options, fmt.Sprintf("%d", i+1),)
 		selectedPackets = append(selectedPackets, packets[i])
 	}
 	// Interactive packet selection
 	result, _ := pterm.DefaultInteractiveSelect.
 		WithOptions(options).
 		Show()
+	fmt.Println("result", result)
 
 	selectedIndex, err := strconv.Atoi(result)
 	if err != nil {
 		return err
 	}
-
 	// Process the selected packet
 	selectedPacket := selectedPackets[selectedIndex-1]
-	fmt.Println("Packet", selectedPacket)
+	fmt.Println(pterm.LightBlue("Packet", selectedPacket))
 	return nil
 }
 
