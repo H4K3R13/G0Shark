@@ -113,6 +113,7 @@ func readPcapFile(filename string) error {
 	var selectedPackets []gopacket.Packet
 	options := []string{}
 
+
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		return err
@@ -127,6 +128,8 @@ func readPcapFile(filename string) error {
 	fmt.Println(pterm.LightGreen("Total packets in the file: ", len(packets)))
 	num_packets,_ = strconv.Atoi(os.Args[2])
 	for i := 0; i < num_packets; i++ {
+		var srcIP string
+		var dstIP string
 		pterm.BgLightGreen.Println("Packet ", i+1) 
 		//Network Layer
 		fmt.Println("Network Layer  ")
@@ -138,8 +141,8 @@ func readPcapFile(filename string) error {
 			if ok {
 				fmt.Println(pterm.Red("Source IP: ", ipLayer.SrcIP))
 				fmt.Println(pterm.Red("Destination IP: ", ipLayer.DstIP))
-				//sourceIP := ipLayer.SrcIP
-				//destination := ipLayer.DstIP
+				srcIP = ipLayer.SrcIP.String()
+				dstIP = ipLayer.DstIP.String()
 			} else {
 				fmt.Println("Not an IPv4 packet.")
 			}
@@ -196,18 +199,19 @@ func readPcapFile(filename string) error {
 		fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
 		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
-
 		//fmt.Println(pterm.LightRed(packets[i]))
-		options = append(options, fmt.Sprintf("%d", i+1),)
+		options = append(options, fmt.Sprintf("%d %s %s", i+1, srcIP, dstIP),) // add more control args for all the packet info like srcIIP ,desIP, portcol..etc
 		selectedPackets = append(selectedPackets, packets[i])
 	}
 	// Interactive packet selection
+	displayPrompt := "No  SrcIP       DstIP"
 	result, _ := pterm.DefaultInteractiveSelect.
+		WithDefaultText(displayPrompt).
 		WithOptions(options).
 		Show()
-	fmt.Println("result", result)
-
-	selectedIndex, err := strconv.Atoi(result)
+	op := strings.Split(result, " ")
+	fmt.Println("result", op[0])
+	selectedIndex, err := strconv.Atoi(op[0])
 	if err != nil {
 		return err
 	}
