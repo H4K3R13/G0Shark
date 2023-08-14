@@ -130,6 +130,7 @@ func readPcapFile(filename string) error {
 	for i := 0; i < num_packets; i++ {
 		var srcIP string
 		var dstIP string
+		var protocol string
 		pterm.BgLightGreen.Println("Packet ", i+1) 
 		//Network Layer
 		fmt.Println("Network Layer  ")
@@ -156,6 +157,7 @@ func readPcapFile(filename string) error {
 		if transportLayer != nil {
 			switch transportLayer.LayerType() {
 			case layers.LayerTypeTCP:
+				protocol = "TCP"
 				fmt.Println(pterm.Yellow("TCP"))
 				tcpLayer, _ := transportLayer.(*layers.TCP)
 				fmt.Println(pterm.Yellow("Checksum:", tcpLayer.Checksum))
@@ -164,6 +166,7 @@ func readPcapFile(filename string) error {
 				fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(tcpLayer.Payload)))
 			case layers.LayerTypeUDP:
+				protocol = "UDP"
 				fmt.Println(pterm.Yellow("UDP"))
 				udpLayer, _ := transportLayer.(*layers.UDP)
 				fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
@@ -171,16 +174,21 @@ func readPcapFile(filename string) error {
 				fmt.Println(pterm.Yellow("Destination Port: ", udpLayer.DstPort))
 				//fmt.Println(pterm.Yellow("Data Length: ", len(udpLayer.Payload)))
 			case layers.LayerTypeICMPv4:
+				protocol = "ICMPv4"
 				fmt.Println(pterm.Yellow("ICMPv4"))
 			case layers.LayerTypeICMPv6:
+				protocol = "ICMPv6"
 				fmt.Println(pterm.Yellow("ICMPv6"))
 			case layers.LayerTypeSCTP:
+				protocol = "SCTP"
 				fmt.Println(pterm.Yellow("SCTP"))
 				sctpLayer, _ := transportLayer.(*layers.SCTP)
 				fmt.Println(pterm.Yellow("Checksum:", sctpLayer.Checksum))
 			case layers.LayerTypeDNS:
+				protocol = "DNS"
 				fmt.Println(pterm.Yellow("DNS"))
 			default:
+				protocol = "Unknown"
 				fmt.Println(pterm.Yellow("Unknown"))
 			}
 		}
@@ -200,11 +208,12 @@ func readPcapFile(filename string) error {
 		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
 		//fmt.Println(pterm.LightRed(packets[i]))
-		options = append(options, fmt.Sprintf("%d %s %s", i+1, srcIP, dstIP),) // add more control args for all the packet info like srcIIP ,desIP, portcol..etc
+		options = append(options, fmt.Sprintf("%d %s %s %s", i+1, srcIP, dstIP, protocol))  
 		selectedPackets = append(selectedPackets, packets[i])
 	}
 	// Interactive packet selection
-	displayPrompt := "No  SrcIP       DstIP"
+	
+	displayPrompt := "No  SrcIP       DstIP         Protocol"
 	result, _ := pterm.DefaultInteractiveSelect.
 		WithDefaultText(displayPrompt).
 		WithOptions(options).
