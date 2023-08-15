@@ -195,6 +195,7 @@ func readPcapFile(filename string) error {
 
 		//Application layers
 		applicationLayer := packets[i].ApplicationLayer()
+		size := packets[i].ApplicationLayer()
 		if applicationLayer!= nil {
 			fmt.Println("Application Layer")
 			fmt.Println(pterm.LightBlue("Data Size: ",applicationLayer))
@@ -208,18 +209,18 @@ func readPcapFile(filename string) error {
 		fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 		}
 		//fmt.Println(pterm.LightRed(packets[i]))
-		options = append(options, fmt.Sprintf("%d %s %s %s", i+1, srcIP, dstIP, protocol))  
+		options = append(options, fmt.Sprintf("%d %s %s %s      %s", i+1, srcIP, dstIP, protocol, size))  
 		selectedPackets = append(selectedPackets, packets[i])
 	}
 	// Interactive packet selection
 	
-	displayPrompt := "No  SrcIP       DstIP         Protocol"
+	displayPrompt := "No  SrcIP       DstIP         Protocol   Size"
 	result, _ := pterm.DefaultInteractiveSelect.
 		WithDefaultText(displayPrompt).
 		WithOptions(options).
 		Show()
 	op := strings.Split(result, " ")
-	fmt.Println("result", op[0])
+	//fmt.Println("result", op[0])
 	selectedIndex, err := strconv.Atoi(op[0])
 	if err != nil {
 		return err
