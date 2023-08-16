@@ -213,21 +213,26 @@ func readPcapFile(filename string) error {
 		selectedPackets = append(selectedPackets, packets[i])
 	}
 	// Interactive packet selection
-	
-	displayPrompt := "No  SrcIP       DstIP         Protocol   Size"
-	result, _ := pterm.DefaultInteractiveSelect.
-		WithDefaultText(displayPrompt).
-		WithOptions(options).
-		Show()
-	op := strings.Split(result, " ")
-	//fmt.Println("result", op[0])
-	selectedIndex, err := strconv.Atoi(op[0])
-	if err != nil {
-		return err
+	for true {
+		displayPrompt := "No  SrcIP       DstIP         Protocol   Size"
+		result, _ := pterm.DefaultInteractiveSelect.
+			WithDefaultText(displayPrompt).
+			WithOptions(options).
+			Show()
+		op := strings.Split(result, " ")
+
+		if op[0] == "q" || op[0] == "Q" {
+			break // Exit loop if 'q' or 'Q' is pressed
+		}
+			selectedIndex, err := strconv.Atoi(op[0])
+			if err != nil {
+				return err
+			}
+			// Process the selected packet
+			selectedPacket := selectedPackets[selectedIndex-1]
+			fmt.Println(pterm.LightBlue("Packet", selectedPacket))
 	}
-	// Process the selected packet
-	selectedPacket := selectedPackets[selectedIndex-1]
-	fmt.Println(pterm.LightBlue("Packet", selectedPacket))
+
 	return nil
 }
 
