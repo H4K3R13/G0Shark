@@ -236,19 +236,6 @@ func readPcapFile(filename string) error {
 	return nil
 }
 
-//Service finder
-func getServiceName(port string) string {
-	serviceNames := map[string]string{
-		"80":    "HTTP",
-		"443":   "HTTPS",
-		"8080":  "HTTP Proxy",
-		"21":    "FTP",
-	}
-
-	service := serviceNames[port]
-	return service
-
-}
 
 func scan() {
 	if len(os.Args) != 5 {
@@ -302,8 +289,7 @@ func scan() {
 	time.Sleep(2 * time.Second)
 	for port, confidence := range results {
 		if confidence >= 1 {
-			serviceName := getServiceName(port)
-			fmt.Printf("Port %s open (confidence: %d)\n  Servivce : %s \n", port, confidence, serviceName)
+			fmt.Printf("Port %s open (confidence: %d) \n", port, confidence)
 		}
 	}
 }
@@ -316,7 +302,7 @@ func help(){
 		{"-r", "Read .pcap files", "-r filename/filepath"},
 		{"-s", "Scan an IP", "-s en0 $IP [port,port,port]or[port-port] "},	
 	}).Render()
-
+	fmt.Println("Select the packets from the option selector")
 }
 
 
