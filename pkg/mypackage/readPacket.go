@@ -1,5 +1,5 @@
 // pcap handling function
-package readPacket
+package mypackage
 
 import(
 	"github.com/google/gopacket"
@@ -11,7 +11,7 @@ import(
 	"os"
 )
 
-func read(filename string) error {
+func Read(filename string) error {
 	var num_packets int
 	//Setting options
 	var selectedPackets []gopacket.Packet
