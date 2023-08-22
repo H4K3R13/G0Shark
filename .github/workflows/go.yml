@@ -25,7 +25,7 @@ jobs:
       run: go mod download
 
     - name: Build
-      run: go build -v ./shark.go
+      run: go build -v ./main.go
 
    # - name: Test
      # run: go test -v ./shark
