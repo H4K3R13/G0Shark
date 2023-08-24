@@ -13,19 +13,6 @@ import (
 )
 
 
-
-//Help Guide
-func help(){
-	pterm.DefaultTable.WithHasHeader().WithBoxed().WithData(pterm.TableData{
-		{"Option", "Function", "Example"},
-		{"-h", "help", ""},
-		{"-r", "Read .pcap files", "-r filename/filepath"},
-		{"-s", "Scan an IP", "-s en0 $IP [port,port,port]or[port-port] "},	
-	}).Render()
-	fmt.Println("Select the packets from the option selector")
-}
-
-
 func main() {
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
@@ -44,6 +31,6 @@ func main() {
 			log.Fatal(err)
 		}
 	}	else if choice == "-h"{
-		help()
+	mypackage.Help()
 	}
 }
