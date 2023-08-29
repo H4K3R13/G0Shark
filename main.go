@@ -2,7 +2,7 @@ package main
 
 import (
 	//"bytes"
-	"fmt"
+	//"fmt"
 	"log"
 	"os"
 	//FOR TUI
@@ -10,7 +10,32 @@ import (
 	//"github.com/gdamore/tcell"
 	//"github.com/pterm/pterm/putils"
 	"G0Shark/pkg/mypackage"
+	tea "github.com/charmbracelet/bubbletea"
 )
+
+type model struct {
+    choice string
+}
+
+func (m model) Init() tea.Cmd {
+    return nil
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+    switch msg.(type) {
+    case tea.KeyMsg:
+        return m, tea.Quit
+    }
+    return m, nil
+}
+
+func (m model) View() string {
+    // Your existing view code here
+    // ...
+	s := "Press q to quit"
+    return s
+}
+
 
 
 func main() {
@@ -18,6 +43,7 @@ func main() {
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 
+	
 
 	choice := os.Args[1]
 	if choice == "-s" {
@@ -33,4 +59,9 @@ func main() {
 	}	else if choice == "-h"{
 	mypackage.Help()
 	}
+
+	program := tea.NewProgram(model{})
+    if err := program.Start(); err != nil {
+        log.Fatal(err)
+    }
 }
