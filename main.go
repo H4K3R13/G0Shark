@@ -22,10 +22,13 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg.(type) {
+	switch msg := msg.(type) {
     case tea.KeyMsg:
-        return m, tea.Quit
-    }
+        switch msg.String() {
+        case "q":
+            return m, tea.Quit
+		}
+	}
     return m, nil
 }
 
