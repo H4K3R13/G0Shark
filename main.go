@@ -15,6 +15,8 @@ import (
 
 type model struct {
     choice string
+	packets []string
+	index   int
 }
 
 func (m model) Init() tea.Cmd {
