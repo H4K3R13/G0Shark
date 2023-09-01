@@ -2,7 +2,7 @@ package main
 
 import (
 	//"bytes"
-	//"fmt"
+	"fmt"
 	"log"
 	"os"
 	//FOR TUI
@@ -48,7 +48,7 @@ func main() {
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 
-	
+
 
 	choice := os.Args[1]
 	if choice == "-s" {
@@ -57,13 +57,15 @@ func main() {
 		//filename := "packet.pcap"
 		filename := os.Args[3]
 		//err := readPcapFile(filename)
-		err := mypackage.Read(filename)
+		packetsData, err := mypackage.Read(filename,3)
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Println(packetsData)
 	}	else if choice == "-h"{
 	mypackage.Help()
 	}
+	
 
 	program := tea.NewProgram(model{})
     if err := program.Start(); err != nil {
