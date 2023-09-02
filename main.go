@@ -5,39 +5,84 @@ import (
 	"fmt"
 	"log"
 	"os"
+	//"strings"
+
 	//FOR TUI
 	"github.com/pterm/pterm"
 	//"github.com/gdamore/tcell"
 	//"github.com/pterm/pterm/putils"
 	"G0Shark/pkg/mypackage"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type model struct {
-    choice string
-	packets []string
-	index   int
+func formatPacketData(packets []mypackage.PacketData) []string {
+    formatted := make([]string, len(packets))
+    for i, packet := range packets {
+        // Format each packet data entry as a string
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
+        // You can add more fields if needed
+    }
+    return formatted
 }
 
-func (m model) Init() tea.Cmd {
+
+type model struct {
+    selected map[int]struct{}
+	packets []string
+	choices []string
+	cursor int
+}
+
+func initialModel() model {
+	packetsData, err := mypackage.Read("packet.pcap", 4)
+    if err != nil {
+        log.Fatal(err)
+    }
+	formattedPackets := formatPacketData(packetsData)
+
+    return model{
+		packets: formattedPackets,
+		selected: make(map[int]struct{}),
+	}
+}
+
+func (m model) Init() tea.Cmd{
     return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
+    switch msg := msg.(type) {
     case tea.KeyMsg:
         switch msg.String() {
-        case "q":
+        case "ctrl+c", "q":
             return m, tea.Quit
-		}
-	}
+        case "up", "k":
+            if m.cursor > 0 {
+                m.cursor--
+            }
+        case "down", "j":
+            if m.cursor < len(m.packets)-1 {
+                m.cursor++
+            }
+        }
+    }
     return m, nil
 }
 
+
 func (m model) View() string {
-    // Your existing view code here
-    // ...
-	s := "Press q to quit"
+    s := "Press q to quit\n"
+    
+    if m.cursor >= 0 && m.cursor < len(m.packets) {
+        selectedPacket := m.packets[m.cursor]
+        s += fmt.Sprintf("Selected Packet:\n")
+        s += fmt.Sprintf("Source IP: %s\n", selectedPacket)
+        // s += fmt.Sprintf("Destination IP: %s\n", selectedPacket.DestinationIP)
+        // s += fmt.Sprintf("Protocol: %s\n", selectedPacket.Protocol)
+        // Add more fields as needed
+    }
+    
     return s
 }
 

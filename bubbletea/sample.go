@@ -13,6 +13,7 @@ type model struct {
 }
 
 func initialModel() model {
+    
     return model{
          choices: []string{"Buy Carrots", "Buy Apples", "Buy Tomatos"},
          selected: make(map[int]struct{}),
