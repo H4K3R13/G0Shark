@@ -73,18 +73,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
     s := "Press q to quit\n"
-    
-    if m.cursor >= 0 && m.cursor < len(m.packets) {
-        selectedPacket := m.packets[m.cursor]
-        s += fmt.Sprintf("Selected Packet:\n")
-        s += fmt.Sprintf("Source IP: %s\n", selectedPacket)
-        // s += fmt.Sprintf("Destination IP: %s\n", selectedPacket.DestinationIP)
-        // s += fmt.Sprintf("Protocol: %s\n", selectedPacket.Protocol)
+
+    for i, packet := range m.packets {
+        s += fmt.Sprintf("Packet %d:\n", i+1)
+        s += fmt.Sprintf("Source IP: %s\n", packet)
+        // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
+        // s += fmt.Sprintf("Protocol: %s\n", packet.Protocol)
         // Add more fields as needed
+        s += "\n" // Separate packets with a blank line
     }
-    
+
     return s
 }
+
 
 
 
