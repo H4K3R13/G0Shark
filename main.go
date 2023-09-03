@@ -21,6 +21,7 @@ func formatPacketData(packets []mypackage.PacketData) []string {
     for i, packet := range packets {
         // Format each packet data entry as a string
         formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
+        fmt.Println(formatted[i])
         // You can add more fields if needed
     }
     return formatted
@@ -30,7 +31,6 @@ func formatPacketData(packets []mypackage.PacketData) []string {
 type model struct {
     selected map[int]struct{}
 	packets []string
-	choices []string
 	cursor int
 }
 
@@ -40,7 +40,6 @@ func initialModel() model {
         log.Fatal(err)
     }
 	formattedPackets := formatPacketData(packetsData)
-
     return model{
 		packets: formattedPackets,
 		selected: make(map[int]struct{}),
@@ -65,15 +64,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
             if m.cursor < len(m.packets)-1 {
                 m.cursor++
             }
+        case "enter", " ":
+            _, ok := m.selected[m.cursor]
+            if ok {
+                delete(m.selected, m.cursor)
+            } else {
+                m.selected[m.cursor] = struct{}{}
+            }
         }
     }
     return m, nil
 }
 
 
-func (m model) View() string {
-    s := "Press q to quit\n"
 
+func (m model) View() string {
+    s := "Select A Packet\n"
     for i, packet := range m.packets {
         s += fmt.Sprintf("Packet %d:\n", i+1)
         s += fmt.Sprintf("Source IP: %s\n", packet)
@@ -82,9 +88,10 @@ func (m model) View() string {
         // Add more fields as needed
         s += "\n" // Separate packets with a blank line
     }
-
+    s += "\nPress q to quit.\n"
     return s
 }
+
 
 
 
@@ -100,14 +107,7 @@ func main() {
 	if choice == "-s" {
 		mypackage.Scan()
 	} else if choice == "-r" {
-		//filename := "packet.pcap"
-		filename := os.Args[3]
-		//err := readPcapFile(filename)
-		packetsData, err := mypackage.Read(filename,3)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(packetsData)
+        initialModel()
 	}	else if choice == "-h"{
 	mypackage.Help()
 	}
