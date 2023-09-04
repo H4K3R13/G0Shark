@@ -20,8 +20,7 @@ func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
         // Format each packet data entry as a string
-        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
-        fmt.Println(formatted[i])
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s,", packet.SourceIP, packet.DestinationIP, packet.Protocol)
         // You can add more fields if needed
     }
     return formatted
@@ -29,9 +28,9 @@ func formatPacketData(packets []mypackage.PacketData) []string {
 
 
 type model struct {
-    selected map[int]struct{}
 	packets []string
-	cursor int
+    cursor int
+    selected map[int]struct{}
 }
 
 func initialModel() model {
@@ -81,8 +80,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m model) View() string {
     s := "Select A Packet\n"
     for i, packet := range m.packets {
-        s += fmt.Sprintf("Packet %d:\n", i+1)
-        s += fmt.Sprintf("Source IP: %s\n", packet)
+        cursor := " " 
+        if m.cursor == i {
+            cursor = ">" // cursor!
+        }
+        checked := " " 
+        if _, ok := m.selected[i]; ok {
+            checked = "x" // selected!
+        }
+        s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, packet)
         // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
         // s += fmt.Sprintf("Protocol: %s\n", packet.Protocol)
         // Add more fields as needed
@@ -107,14 +113,14 @@ func main() {
 	if choice == "-s" {
 		mypackage.Scan()
 	} else if choice == "-r" {
-        initialModel()
+
+        program := tea.NewProgram(initialModel())
+        if err := program.Start(); err != nil {
+            log.Fatal(err)
+    }
 	}	else if choice == "-h"{
 	mypackage.Help()
 	}
 	
 
-	program := tea.NewProgram(model{})
-    if err := program.Start(); err != nil {
-        log.Fatal(err)
-    }
 }
