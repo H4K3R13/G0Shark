@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	//"strings"
-
+    "strconv"
 	//FOR TUI
 	"github.com/pterm/pterm"
 	//"github.com/gdamore/tcell"
@@ -33,8 +33,8 @@ type model struct {
     selected map[int]struct{}
 }
 
-func initialModel() model {
-	packetsData, err := mypackage.Read("packet.pcap", 4)
+func initialModel(filename string, numPackets int) model {
+	packetsData, err := mypackage.Read(filename, numPackets)
     if err != nil {
         log.Fatal(err)
     }
@@ -113,8 +113,13 @@ func main() {
 	if choice == "-s" {
 		mypackage.Scan()
 	} else if choice == "-r" {
-
-        program := tea.NewProgram(initialModel())
+        num_arg := os.Args[2]
+        filename := os.Args[3]
+        num, err := strconv.Atoi(num_arg)
+        if err != nil {
+            log.Fatalf("Failed to convert %s to an integer: %v", num, err)
+        }
+        program := tea.NewProgram(initialModel(filename,num))
         if err := program.Start(); err != nil {
             log.Fatal(err)
     }
