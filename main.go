@@ -78,23 +78,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 
 func (m model) View() string {
-    s := "Select A Packet\n"
+    s := pterm.Green("Select A Packet\n")
     for i, packet := range m.packets {
         cursor := " " 
         if m.cursor == i {
-            cursor = ">" // cursor!
+            cursor = pterm.Blue(">") // cursor!
         }
         checked := " " 
         if _, ok := m.selected[i]; ok {
-            checked = "x" // selected!
+            checked = pterm.Red("x") // selected!
         }
-        s += fmt.Sprintf("%s [%s] %s\n", cursor, checked, packet)
+        s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
         // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
         // s += fmt.Sprintf("Protocol: %s\n", packet.Protocol)
         // Add more fields as needed
         s += "\n" // Separate packets with a blank line
     }
-    s += "\nPress q to quit.\n"
+    s += pterm.Green("\nPress q to quit.\n")
+    
     return s
 }
 
