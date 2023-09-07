@@ -64,16 +64,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
                 m.cursor++
             }
         case "enter", " ":
-            _, ok := m.selected[m.cursor]
-            if ok {
-                delete(m.selected, m.cursor)
-            } else {
-                m.selected[m.cursor] = struct{}{}
-            }
+            // Clear all previous selections
+            m.selected = make(map[int]struct{})
+            
+            // Select the current item
+            m.selected[m.cursor] = struct{}{}
         }
     }
     return m, nil
 }
+
 
 
 
@@ -99,17 +99,10 @@ func (m model) View() string {
     return s
 }
 
-
-
-
-
 func main() {
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
-
-
-
 	choice := os.Args[1]
 	if choice == "-s" {
 		mypackage.Scan()
