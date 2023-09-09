@@ -12,6 +12,9 @@ This is a tool has similar features of Wireshark. Which can be used to read pack
 
 ## Tech Stack
 - GO Lang
+    - pterm
+    - bubbletea
+    - gopackets
 ## How to run
 Clone the repository
 ```bash
