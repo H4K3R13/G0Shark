@@ -34,10 +34,11 @@ type PacketData struct {
 }
 
 type model struct {
+    packetsData []mypackage.PacketData // Add a field to store packet data
 	packets []string
     cursor int
     selected map[int]struct{}
-    details  []PacketData // Store selected packet details
+    details     []mypackage.PacketData // Store selected packet details
 }
 
 func initialModel(filename string, numPackets int) model {
@@ -47,6 +48,7 @@ func initialModel(filename string, numPackets int) model {
     }
 	formattedPackets := formatPacketData(packetsData)
     return model{
+        packetsData: packetsData,
 		packets: formattedPackets,
 		selected: make(map[int]struct{}),
 	}
@@ -71,11 +73,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
                 m.cursor++
             }
         case "enter", " ":
-            // Clear all previous selections
             m.selected = make(map[int]struct{})
-            
-            // Select the current item
             m.selected[m.cursor] = struct{}{}
+            m.details = append(m.details, m.packetsData[m.cursor])
         }
     }
     return m, nil
@@ -96,9 +96,7 @@ func (m model) View() string {
             checked = pterm.Red("x") // selected!
         }
         s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
-        // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
-        // s += fmt.Sprintf("Protocol: %s\n", packet.Protocol)
-        // Add more fields as needed
+        s += pterm.Green("Details: ") + pterm.Cyan(m.details[i].SourceIP) + pterm.Green(" -> ") + pterm.Cyan(m.details[i].DestinationIP) + pterm.Green(" Protocol: ") + pterm.Cyan(m.details[i].Protocol) + "\n"
         s += "\n" // Separate packets with a blank line
     }
     s += pterm.Green("\nPress q to quit.\n")
