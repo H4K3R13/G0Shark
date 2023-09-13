@@ -26,19 +26,12 @@ func formatPacketData(packets []mypackage.PacketData) []string {
     return formatted
 }
 
-type PacketData struct {
-    SourceIP      string
-    DestinationIP string
-    Protocol      string
-    // Add other fields you want to include
-}
 
 type model struct {
     packetsData []mypackage.PacketData // Add a field to store packet data
 	packets []string
     cursor int
     selected map[int]struct{}
-    details     []mypackage.PacketData // Store selected packet details
 }
 
 func initialModel(filename string, numPackets int) model {
@@ -49,7 +42,6 @@ func initialModel(filename string, numPackets int) model {
 	formattedPackets := formatPacketData(packetsData)
     fmt.Println("%",packetsData)
     return model{
-        packetsData: packetsData,
 		packets: formattedPackets,
 		selected: make(map[int]struct{}),
 	}

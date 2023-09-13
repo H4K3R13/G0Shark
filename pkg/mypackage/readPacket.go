@@ -1,9 +1,12 @@
 // pcap handling function
 package mypackage
 
-import(
+import (
+	"fmt"
+
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/pcap"
+
 	//"fmt"
 	//"github.com/pterm/pterm"
 	"github.com/google/gopacket/layers"
@@ -16,6 +19,7 @@ type PacketData struct {
 	SourceIP      string
 	DestinationIP string
 	Protocol      string
+	payload 	  string
 	// Add other fields you want to include
 }
 
@@ -34,6 +38,7 @@ func Read(filename string, numPackets int) ([]PacketData, error) {
 			break
 		}
 		var packetInfo PacketData
+		packetInfo.payload = fmt.Sprintf("%s",packet)
 		networkLayer := packet.NetworkLayer()
 		if networkLayer != nil {
 			ipLayer, ok := networkLayer.(*layers.IPv4)
