@@ -20,7 +20,7 @@ func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
         // Format each packet data entry as a string
-        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s,", packet.SourceIP, packet.DestinationIP, packet.Protocol)
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol, packet)
         // You can add more fields if needed
     }
     return formatted
@@ -40,7 +40,7 @@ func initialModel(filename string, numPackets int) model {
         log.Fatal(err)
     }
 	formattedPackets := formatPacketData(packetsData)
-    fmt.Println("%",packetsData)
+    // fmt.Println("%",formattedPackets)
     return model{
 		packets: formattedPackets,
 		selected: make(map[int]struct{}),
