@@ -16,35 +16,38 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func formatPacketData(packets []mypackage.PacketData) []string {
+func formatPacketData(packets []mypackage.PacketData, selected map[int]struct{}) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
-        // Format each packet data entry as a string
-        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol, packet)
-        // You can add more fields if needed
+        payload := ""
+        if _, ok := selected[i]; ok {
+             payload = fmt.Sprintf("%+v", packet)
+        }
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol, payload)
     }
     return formatted
 }
 
 
 type model struct {
-    packetsData []mypackage.PacketData // Add a field to store packet data
 	packets []string
     cursor int
     selected map[int]struct{}
 }
 
 func initialModel(filename string, numPackets int) model {
-	packetsData, err := mypackage.Read(filename, numPackets)
+    packetsData, err := mypackage.Read(filename, numPackets)
     if err != nil {
         log.Fatal(err)
     }
-	formattedPackets := formatPacketData(packetsData)
-    // fmt.Println("%",formattedPackets)
+    selected := make(map[int]struct{})
+    formattedPackets := formatPacketData(packetsData, selected)
+
     return model{
-		packets: formattedPackets,
-		selected: make(map[int]struct{}),
-	}
+        packets:  formattedPackets,
+        cursor:   0, 
+        selected: selected, 
+    }
 }
 
 func (m model) Init() tea.Cmd{
