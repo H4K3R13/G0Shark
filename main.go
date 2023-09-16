@@ -16,14 +16,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func formatPacketData(packets []mypackage.PacketData, selected map[int]struct{}) []string {
+func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
-        payload := ""
-        if _, ok := selected[i]; ok {
-             payload = fmt.Sprintf("%+v", packet)
-        }
-        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol, payload)
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
     }
     return formatted
 }
@@ -40,13 +36,10 @@ func initialModel(filename string, numPackets int) model {
     if err != nil {
         log.Fatal(err)
     }
-    selected := make(map[int]struct{})
-    formattedPackets := formatPacketData(packetsData, selected)
+    formattedPackets := formatPacketData(packetsData)
 
     return model{
         packets:  formattedPackets,
-        cursor:   0, 
-        selected: selected, 
     }
 }
 
@@ -91,7 +84,8 @@ func (m model) View() string {
         }
         checked := " " 
         if _, ok := m.selected[i]; ok {
-            checked = pterm.Red("x") // selected!
+            checked = pterm.Red("x")
+            fmt.Print("Hello")
         }
         s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
         // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
@@ -116,7 +110,7 @@ func main() {
         filename := os.Args[3]
         num, err := strconv.Atoi(num_arg)
         if err != nil {
-            log.Fatalf("Failed to convert %s to an integer: %v", num, err)
+            log.Fatalf("Failed to convert %s to an integer: %v")
         }
         program := tea.NewProgram(initialModel(filename,num))
         if err := program.Start(); err != nil {
