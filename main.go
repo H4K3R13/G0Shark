@@ -19,7 +19,7 @@ import (
 func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
-        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s, Payload: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
+        formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
     }
     return formatted
 }
@@ -72,9 +72,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
     return m, nil
 }
 
-
-
-
 func (m model) View() string {
     s := pterm.Green("Select A Packet\n")
     for i, packet := range m.packets {
@@ -85,7 +82,7 @@ func (m model) View() string {
         checked := " " 
         if _, ok := m.selected[i]; ok {
             checked = pterm.Red("x")
-            fmt.Print("Hello")
+            fmt.Print(packet)
         }
         s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
         // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
