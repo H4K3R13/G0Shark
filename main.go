@@ -82,18 +82,29 @@ func (m model) View() string {
         checked := " " 
         if _, ok := m.selected[i]; ok {
             checked = pterm.Red("x")
-            fmt.Print(packet)
         }
         s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
-        // s += fmt.Sprintf("Destination IP: %s\n", packet.DestinationIP)
-        // s += fmt.Sprintf("Protocol: %s\n", packet.Protocol)
-        // Add more fields as needed
-        s += "\n" // Separate packets with a blank line
     }
+    selectedPacket := m.getSelectedPacket()
+    if selectedPacket != "" {
+        s += "\nSelected Packet Details:\n"
+        s += selectedPacket
+    }
+
     s += pterm.Green("\nPress q to quit.\n")
     
     return s
 }
+
+func (m model) getSelectedPacket() string {
+    for i := range m.selected {
+        if i >= 0 && i < len(m.packets) {
+            return m.packets[i]
+        }
+    }
+    return ""
+}
+
 
 func main() {
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
