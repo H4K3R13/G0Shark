@@ -52,14 +52,10 @@ func Read(filename string, numPackets int) ([]PacketData, error) {
 			switch transportLayer.LayerType() {
 			case layers.LayerTypeTCP:
 				packetInfo.Protocol = "TCP"
-				// Handle other TCP data
 			case layers.LayerTypeUDP:
 				packetInfo.Protocol = "UDP"
-				// Handle other UDP data
 			case layers.LayerTypeICMPv4:
 				packetInfo.Protocol = "ICMPv4"
-				// Handle other ICMPv4 data
-			// Handle other cases
 			}
 		}
 		packetsData = append(packetsData, packetInfo)

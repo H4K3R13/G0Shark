@@ -24,7 +24,6 @@ func formatPacketData(packets []mypackage.PacketData) []string {
     return formatted
 }
 
-
 type model struct {
 	packets []string
     cursor int
@@ -37,7 +36,6 @@ func initialModel(filename string, numPackets int) model {
         log.Fatal(err)
     }
     formattedPackets := formatPacketData(packetsData)
-
     return model{
         packets:  formattedPackets,
     }
@@ -62,11 +60,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
                 m.cursor++
             }
         case "enter", " ":
-            // Clear all previous selections
             m.selected = make(map[int]struct{})
-            
-            // Select the current item
             m.selected[m.cursor] = struct{}{}
+        case "c":
+            m.selected = make(map[int]struct{}) // To clear up the displayed deatial of selected packets
         }
     }
     return m, nil
@@ -90,8 +87,7 @@ func (m model) View() string {
         s += "\nSelected Packet Details:\n"
         s += selectedPacket
     }
-
-    s += pterm.Green("\nPress q to quit.\n")
+    s += pterm.Green("\nPress q to quit.\t c to clear")
     
     return s
 }
