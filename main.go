@@ -82,10 +82,19 @@ func (m model) View() string {
         }
         s += pterm.Sprintf("%s [%s] %s\n", cursor, checked, packet)
     }
-    selectedPacket := m.getSelectedPacket()
-    if selectedPacket != "" {
+    // selectedPacket := m.getSelectedPacket()
+    // if selectedPacket != "" {
+    //     s += "\nSelected Packet Details:\n"
+    //     s += selectedPacket
+    // }
+    if len(m.selected) > 0 {
         s += "\nSelected Packet Details:\n"
-        s += selectedPacket
+        for i := range m.selected {
+            if i >= 0 && i < len(m.packets) {
+                //Display the selected Packet from the mypackage.Display
+                mypackage.Display(os.Args[3], i)
+            }
+        }
     }
     s += pterm.Green("\nPress q to quit.\t c to clear")
     
