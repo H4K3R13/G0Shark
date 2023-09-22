@@ -101,15 +101,6 @@ func (m model) View() string {
     return s
 }
 
-func (m model) getSelectedPacket() string {
-    for i := range m.selected {
-        if i >= 0 && i < len(m.packets) {
-            mypackage.Display(os.Args[3], i)
-            return m.packets[i]
-        }
-    }
-    return ""
-}
 
 
 func main() {
