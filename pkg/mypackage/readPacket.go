@@ -63,11 +63,14 @@ func Read(filename string, numPackets int) ([]PacketData, error) {
 	return packetsData, nil
 }
 
-func Display(filename string, index int) error {
+
+func Display(filename string, index int) []string {
 	var num_packets int
+	formatted := make([]string, index)
+	formatted[0] = fmt.Sprintf("Hello, Iam a Packet Man")
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 	defer handle.Close()
 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
@@ -149,5 +152,5 @@ func Display(filename string, index int) error {
 			}
 		}
 	}
-	return nil
+	return formatted
 }

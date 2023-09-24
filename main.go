@@ -88,9 +88,9 @@ func (m model) View() string {
         for i := range m.selected {
             if i >= 0 && i < len(m.packets) {
                 // Capture the selected Packet from the mypackage.Display
-                capturedOutput:= mypackage.Display(os.Args[3], i)
+                capture := mypackage.Display(os.Args[3], i)
                 // Display captured output
-                s += capturedOutput
+                s += capture[0]
             }
         }
     }
