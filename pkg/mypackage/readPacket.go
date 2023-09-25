@@ -66,8 +66,8 @@ func Read(filename string, numPackets int) ([]PacketData, error) {
 
 func Display(filename string, index int) []string {
 	var num_packets int
-	formatted := make([]string, index)
-	formatted[0] = fmt.Sprintf("Hello, Iam a Packet Man")
+	var formatted []string 
+	formatted = append(formatted, "Hello, Iam a Packet Man")
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		fmt.Println(err)

@@ -90,7 +90,8 @@ func (m model) View() string {
                 // Capture the selected Packet from the mypackage.Display
                 capture := mypackage.Display(os.Args[3], i)
                 // Display captured output
-                s += capture[0]
+                fmt.Println(capture)
+               // s += capture[0]
             }
         }
     }
