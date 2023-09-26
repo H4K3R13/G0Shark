@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	//"strings"
+	"strings"
     "strconv"
 	//FOR TUI
 	"github.com/pterm/pterm"
@@ -90,8 +90,7 @@ func (m model) View() string {
                 // Capture the selected Packet from the mypackage.Display
                 capture := mypackage.Display(os.Args[3], i)
                 // Display captured output
-                fmt.Println(capture)
-               // s += capture[0]
+                s += strings.Join(capture, "\n")
             }
         }
     }
