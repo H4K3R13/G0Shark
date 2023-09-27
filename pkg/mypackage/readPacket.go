@@ -66,7 +66,7 @@ func Read(filename string, numPackets int) ([]PacketData, error) {
 
 func Display(filename string, index int) []string {
 	var num_packets int
-	var formatted []string 
+	var packet []string 
 	handle, err := pcap.OpenOffline(filename)
 	if err != nil {
 		fmt.Println(err)
@@ -84,6 +84,7 @@ func Display(filename string, index int) []string {
 		if i == index {
 			//pterm.BgLightGreen.Println("Packet ", i+1)
 			//Network Layer
+			packet = append(packet, fmt.Sprintf("Network Layer"))
 			//fmt.Println("Network Layer  ")
 			//pterm.Println(pterm.Red(packets[i].NetworkLayer()))
 			networkLayer := packets[i].NetworkLayer()
@@ -91,68 +92,94 @@ func Display(filename string, index int) []string {
 				// Type assertion to get the IPv4 layer
 				ipLayer, ok := networkLayer.(*layers.IPv4)
 				if ok {
-					formatted = append(formatted, fmt.Sprintf("Source IP: %s", ipLayer.SrcIP))
-					formatted = append(formatted, fmt.Sprintf("Destination IP: %s", ipLayer.DstIP))
+					packet = append(packet, fmt.Sprintf("Source IP: %s", ipLayer.SrcIP))
+					packet = append(packet, fmt.Sprintf("Destination IP: %s", ipLayer.DstIP))
 					//fmt.Println(pterm.Red("Source IP: ", ipLayer.SrcIP))
 					//fmt.Println(pterm.Red("Destination IP: ", ipLayer.DstIP))
 				} else {
+					packet = append(packet, fmt.Sprintf("Not an IPv4 packet"))
 					//fmt.Println("Not an IPv4 packet.")
 				}
-			// } else {
-			// 	//fmt.Println("No network layer found.")
-			// }
-			// //Transport Layer
-			// //fmt.Println("Transport Layer")
-			// //fmt.Print(pterm.Yellow("Protocol: "))
-			// transportLayer := packets[i].TransportLayer()
-			// if transportLayer != nil {
-			// 	switch transportLayer.LayerType() {
-			// 	case layers.LayerTypeTCP:
-			// 		//fmt.Println(pterm.Yellow("TCP"))
-			// 		//tcpLayer, _ := transportLayer.(*layers.TCP)
-			// 		//fmt.Println(pterm.Yellow("Checksum:", tcpLayer.Checksum))
-			// 	//	fmt.Println(pterm.Yellow("Source Port: ", tcpLayer.SrcPort))
-			// 		//fmt.Println(pterm.Yellow("Destination Port: ", tcpLayer.DstPort))
-			// 		//fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
-			// 		//fmt.Println(pterm.Yellow("Data Length: ", len(tcpLayer.Payload)))
-			// 	case layers.LayerTypeUDP:
-			// 		fmt.Println(pterm.Yellow("UDP"))
-			// 		udpLayer, _ := transportLayer.(*layers.UDP)
-			// 		fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
-			// 		fmt.Println(pterm.Yellow("Source Port: ", udpLayer.SrcPort))
-			// 		fmt.Println(pterm.Yellow("Destination Port: ", udpLayer.DstPort))
-			// 		//fmt.Println(pterm.Yellow("Data Length: ", len(udpLayer.Payload)))
-			// 	case layers.LayerTypeICMPv4:
-			// 		fmt.Println(pterm.Yellow("ICMPv4"))
-			// 	case layers.LayerTypeICMPv6:
-			// 		fmt.Println(pterm.Yellow("ICMPv6"))
-			// 	case layers.LayerTypeSCTP:
-			// 		fmt.Println(pterm.Yellow("SCTP"))
-			// 		sctpLayer, _ := transportLayer.(*layers.SCTP)
-			// 		fmt.Println(pterm.Yellow("Checksum:", sctpLayer.Checksum))
-			// 	case layers.LayerTypeDNS:
-			// 		fmt.Println(pterm.Yellow("DNS"))
-			// 	default:
-			// 		fmt.Println(pterm.Yellow("Unknown"))
-			// 	}
-			// }
+			} else {
+				packet = append(packet, fmt.Sprintf("No Network Layer Found"))
+				//fmt.Println("No network layer found.")
+			}
+			//Transport Layer
+			packet = append(packet, fmt.Sprintf("Transport Layer"))
+			//fmt.Println("Transport Layer")
+			packet = append(packet, fmt.Sprintf("Protocol: "))
+			//fmt.Print(pterm.Yellow("Protocol: "))
+			transportLayer := packets[i].TransportLayer()
+			if transportLayer != nil {
+				switch transportLayer.LayerType() {
+				case layers.LayerTypeTCP:
+					packet = append(packet, fmt.Sprintf("TCP"))
+					//fmt.Println(pterm.Yellow("TCP"))
+					tcpLayer, _ := transportLayer.(*layers.TCP)
+					packet = append(packet, fmt.Sprintf("Checksum: %d", tcpLayer.Checksum))
+					//fmt.Println(pterm.Yellow("Checksum:", tcpLayer.Checksum))
+					packet = append(packet, fmt.Sprintf("Destination Port: %s", tcpLayer.DstPort))
+					//fmt.Println(pterm.Yellow("Source Port: ", tcpLayer.SrcPort))
+					packet = append(packet, fmt.Sprintf("Source Port: %s", tcpLayer.SrcPort))
+					//fmt.Println(pterm.Yellow("Destination Port: ", tcpLayer.DstPort))
+					//packet = append(packet, fmt.Sprintf("Flags: %b", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
+					//fmt.Println(pterm.Yellow("Flags:", tcpLayer.FIN, tcpLayer.SYN, tcpLayer.RST, tcpLayer.PSH, tcpLayer.ACK, tcpLayer.URG, tcpLayer.ECE, tcpLayer.CWR))
+					packet = append(packet, fmt.Sprintf("Data Length: %d", len(tcpLayer.Payload)))
+					//fmt.Println(pterm.Yellow("Data Length: ", len(tcpLayer.Payload)))
+				case layers.LayerTypeUDP:
+					packet = append(packet, fmt.Sprintf("UDP"))
+					//fmt.Println(pterm.Yellow("UDP"))
+					udpLayer, _ := transportLayer.(*layers.UDP)
+					packet = append(packet, fmt.Sprintf("Checksum: %d", udpLayer.Checksum))
+					//fmt.Println(pterm.Yellow("Checksum: ", udpLayer.Checksum))
+					packet = append(packet, fmt.Sprintf("Source Port: %s", udpLayer.SrcPort))
+					//fmt.Println(pterm.Yellow("Source Port: ", udpLayer.SrcPort))
+					packet = append(packet, fmt.Sprintf("Destination Port: %s", udpLayer.DstPort))
+					//fmt.Println(pterm.Yellow("Destination Port: ", udpLayer.DstPort))
+					packet = append(packet, fmt.Sprintf("Data Length: %d", len(udpLayer.Payload)))
+					//fmt.Println(pterm.Yellow("Data Length: ", len(udpLayer.Payload)))
+				case layers.LayerTypeICMPv4:
+					packet = append(packet, fmt.Sprintf("ICMPv4"))
+					//fmt.Println(pterm.Yellow("ICMPv4"))
+				case layers.LayerTypeICMPv6:
+					packet = append(packet, fmt.Sprintf("ICMPv6"))
+					//fmt.Println(pterm.Yellow("ICMPv6"))
+				case layers.LayerTypeSCTP:
+					packet = append(packet, fmt.Sprintf("SCTP"))
+					//fmt.Println(pterm.Yellow("SCTP"))
+					sctpLayer, _ := transportLayer.(*layers.SCTP)
+					packet = append(packet, fmt.Sprintf("Checksum: %d", sctpLayer.Checksum))
+					//fmt.Println(pterm.Yellow("Checksum:", sctpLayer.Checksum))
+				case layers.LayerTypeDNS:
+					packet = append(packet, fmt.Sprintf("DNS"))
+					//fmt.Println(pterm.Yellow("DNS"))
+				default:
+					packet = append(packet, fmt.Sprintf("Unknown"))
+					//fmt.Println(pterm.Yellow("Unknown"))
+				}
+			}
 
-			// //Application layers
-			// applicationLayer := packets[i].ApplicationLayer()
-			// if applicationLayer != nil {
-			// 	fmt.Println("Application Layer")
-			// 	fmt.Println(pterm.LightBlue("Data Size: ", applicationLayer))
-			// }
+			//Application layers
+			applicationLayer := packets[i].ApplicationLayer()
+			if applicationLayer != nil {
+				packet = append(packet, fmt.Sprintf("Application Layer"))
+				//fmt.Println("Application Layer")
+				packet = append(packet, fmt.Sprintf("Data Size: %s", applicationLayer))
+				//fmt.Println(pterm.LightBlue("Data Size: ", applicationLayer))
+			}
 
-			// captureInfo := packets[i].Metadata()
-			// if captureInfo != nil {
-			// 	fmt.Println("Capture Info:")
-			// 	fmt.Println(pterm.Green("Timestamp: ", captureInfo.Timestamp))
-			// 	fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
-			// 	fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
-			// }
+			captureInfo := packets[i].Metadata()
+			if captureInfo != nil {
+				packet = append(packet, fmt.Sprintf("Capture Info: "))
+				//fmt.Println("Capture Info:")
+				packet = append(packet, fmt.Sprintf("Timestamp %s", captureInfo.Timestamp))
+				//fmt.Println(pterm.Green("Timestamp: ", captureInfo.Timestamp))
+				packet = append(packet, fmt.Sprintf("Capture Length: %d", captureInfo.CaptureLength))
+				//fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
+				packet = append(packet, fmt.Sprintf("Truncated: %t", captureInfo.Truncated))
+				//fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
+			}
 		}
 	}
-	}
-	return formatted
+	return packet
 }
