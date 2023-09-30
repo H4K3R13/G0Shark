@@ -19,6 +19,9 @@ import (
 func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
+        if packet.SourceIP == " " {
+            fmt.Println("Hello")
+        }
         formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
     }
     return formatted

@@ -177,6 +177,7 @@ func Display(filename string, index int) []string {
 				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Truncated: ", captureInfo.Truncated)))
 				//fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 			}
+			packet = append(packet, pterm.Sprintf(pterm.LightCyan(packets[i])))
 		}
 	}
 	return packet
