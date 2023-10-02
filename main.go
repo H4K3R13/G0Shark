@@ -107,7 +107,7 @@ func (m model) View() string {
         }
     }
 
-    s += pterm.Red("\nPress q to quit.\t c to clear")
+    s += pterm.Green("\nPress q to quit.\t c to clear")
     
     return s
 }

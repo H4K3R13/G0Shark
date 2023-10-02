@@ -162,19 +162,19 @@ func Display(filename string, index int) []string {
 			if applicationLayer != nil {
 				packet = append(packet, pterm.Sprintf(pterm.Blue("Application Layer")))
 				//fmt.Println("Application Layer")
-				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Data Size: ", applicationLayer)))
+				packet = append(packet, fmt.Sprintf("Data Size: %s", applicationLayer))
 				//fmt.Println(pterm.LightBlue("Data Size: ", applicationLayer))
 			}
 
 			captureInfo := packets[i].Metadata()
 			if captureInfo != nil {
-				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Capture Info: ")))
+				packet = append(packet, fmt.Sprintf("Capture Info: "))
 				//fmt.Println("Capture Info:")
-				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Timestamp: ", captureInfo.Timestamp)))
+				packet = append(packet, fmt.Sprintf("Timestamp %s", captureInfo.Timestamp))
 				//fmt.Println(pterm.Green("Timestamp: ", captureInfo.Timestamp))
-				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Capture Length: ", captureInfo.CaptureLength)))
+				packet = append(packet, fmt.Sprintf("Capture Length: %d", captureInfo.CaptureLength))
 				//fmt.Println(pterm.Green("Capture Length: ", captureInfo.CaptureLength))
-				packet = append(packet, pterm.Sprintf(pterm.LightGreen("Truncated: ", captureInfo.Truncated)))
+				packet = append(packet, fmt.Sprintf("Truncated: %t", captureInfo.Truncated))
 				//fmt.Println(pterm.Green("Truncated: ", captureInfo.Truncated))
 			}
 			packet = append(packet, pterm.Sprintf(pterm.LightCyan(packets[i])))
