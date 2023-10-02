@@ -9,26 +9,22 @@ import (
     "strconv"
 	//FOR TUI
 	"github.com/pterm/pterm"
-	"github.com/gdamore/tcell"
+	//"github.com/gdamore/tcell"
 	//"github.com/pterm/pterm/putils"
 	"G0Shark/pkg/mypackage"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func formatPacketData(packets []mypackage.PacketData) []string {
     formatted := make([]string, len(packets))
     for i, packet := range packets {
-        if packet.SourceIP == " " {
-            fmt.Println("Hello")
-        }
         formatted[i] = fmt.Sprintf("Source IP: %s, Destination IP: %s, Protocol: %s", packet.SourceIP, packet.DestinationIP, packet.Protocol)
     }
     return formatted
 }
 
-
 type model struct {
-    screen tcell.Screen
 	packets []string
     cursor int
     selected map[int]struct{}
@@ -45,16 +41,8 @@ func initialModel(filename string, numPackets int) model {
     }
 }
 
-func (m model) Init() tea.Cmd {
-	screen, err := tcell.NewScreen()
-	if err != nil {
-		log.Fatal("Failed to create screen:", err)
-	}
-	if err := screen.Init(); err != nil {
-		log.Fatal("Failed to initialize screen:", err)
-	}
-	m.screen = screen
-	return nil
+func (m model) Init() tea.Cmd{
+    return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
