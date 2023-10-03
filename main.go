@@ -12,7 +12,7 @@ import (
 	//"github.com/gdamore/tcell"
 	//"github.com/pterm/pterm/putils"
 	"G0Shark/pkg/mypackage"
-
+    "github.com/rivo/tview"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -104,6 +104,10 @@ func (m model) View() string {
 
 
 func main() {
+    box := tview.NewBox().SetBorder(true).SetTitle("Hello, world!")
+	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+		panic(err)
+	}
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
