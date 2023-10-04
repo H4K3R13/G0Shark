@@ -31,6 +31,7 @@ func main() {
 		AddItem(main, 1, 1, 1, 1, 0, 100, false).
 		AddItem(sideBar, 1, 2, 1, 1, 0, 100, false)
 
+	//Calling grid
 	if err := tview.NewApplication().SetRoot(grid, true).SetFocus(grid).Run(); err != nil {
 		panic(err)
 	}
