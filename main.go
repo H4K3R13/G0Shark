@@ -104,14 +104,15 @@ func (m model) View() string {
 
 
 func main() {
-    box := tview.NewBox().SetBorder(true).SetTitle("Hello, world!")
-	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
-		panic(err)
-	}
+
 	s,_ := pterm.DefaultBigText.WithLetters(pterm.NewLettersFromString("G0Shark")).Srender()
 	pterm.DefaultCenter.Println(pterm.LightBlue(s))
 	pterm.DefaultCenter.Println(("Develped By @H4K3R (Github)"))
 	choice := os.Args[1]
+    box := tview.NewBox().SetBorder(true).SetTitle("G0Shark")
+	if err := tview.NewApplication().SetRoot(box, true).Run(); err != nil {
+		panic(err)
+	}
 	if choice == "-s" {
 		mypackage.Scan()
 	} else if choice == "-r" {
